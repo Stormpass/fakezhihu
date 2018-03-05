@@ -30,8 +30,6 @@
 	    }
 	  },
 	  methods:{
-	  	showdata(){
-	  	},
       getListData:function(){
         var url='https://news-at.zhihu.com/api/4/news/latest';
       	$.get(this.requestUrl+"?url="+url,(data,status)=>{
@@ -39,6 +37,7 @@
             data=JSON.parse(data);
             this.multiStoryDataList.push(data);
             this.btnFlag=true;
+            localStorage.setItem('multiStoryDataList',JSON.stringify(this.multiStoryDataList));
 			    }catch(e){
 			    	console.log(e.message);
 			    }
@@ -113,8 +112,22 @@
       }
 	  },
 	  mounted(){
-	  	this.showdata();
-	  	this.getListData();
+      var t= new Date().getTime();//获取当前时间
+      try{
+        var cache=JSON.parse(localStorage.getItem('multiStoryDataList'));
+        if (cache) {
+          this.multiStoryDataList=cache;
+          if (!localStorage.getItem('lastUpdateTime')||t-localStorage.getItem('lastUpdateTime')>20000) {
+            this.getListData();
+            localStorage.setItem('lastUpdateTime',t);
+          }
+        }else{
+          this.getListData();
+        }
+      }catch(e){
+        this.getListData();
+      }
+      
       this.hasNewVersion();
 	  	var i = document.getElementsByTagName("meta");
       i[1]["content"] = "width=640,maximum-scale=1,user-scalable=no";
