@@ -4,7 +4,7 @@
 		<div class="list-container" v-for='storyDataList in multiStoryDataList'>
 			<story-list  :items="storyDataList.stories" ></story-list>
 		</div>
-    <div @click='loadMore' class="load-btn">{{btnInfo}}</div>
+    <div @click='loadMore' class="load-btn" v-show="btnFlag">{{btnInfo}}</div>
     <div class="white"></div>
 	</div>
 </template>
@@ -19,7 +19,8 @@
 	  data(){
 	    return {
         multiStoryDataList:[],
-        btnInfo:'点击加载更多'
+        btnInfo:'点击加载更多',
+        btnFlag:'false'
 	    }
 	  },
 	  methods:{
@@ -28,10 +29,11 @@
 	  	},
       getListData:function(){
         var url='https://news-at.zhihu.com/api/4/news/latest';
-      	$.get("http://localhost/api?url="+url,(data,status)=>{
+      	$.get(this.requestUrl+"?url="+url,(data,status)=>{
 			    try{
             data=JSON.parse(data);
             this.multiStoryDataList.push(data);
+            this.btnFlag=true;
 			    }catch(e){
 			    	console.log(e.message);
 			    }
@@ -41,7 +43,7 @@
         this.btnInfo="加载中...";
         var day=this.getPreDay(this.multiStoryDataList[this.multiStoryDataList.length-1]['date']);
         var url='https://news-at.zhihu.com/api/4/news/before/'+day;
-        $.get("http://localhost/api?url="+url,(data,status)=>{
+        $.get(this.requestUrl+"?url="+url,(data,status)=>{
           try{
             data=JSON.parse(data);
             this.multiStoryDataList.push(data);

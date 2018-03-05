@@ -37,7 +37,7 @@ export default{
   methods:{
     getStoryDetail:function(id){
       var url='https://news-at.zhihu.com/api/4/news/'+id;
-      $.get("http://localhost/api?url="+url,(data,status)=>{
+      $.get(this.requestUrl+"?url="+url,(data,status)=>{
           try{
             data=JSON.parse(data);
             var html=data['body'];
@@ -58,7 +58,7 @@ export default{
     showComments:function(){
       this.btnInfo='加载中......';
       var url='https://news-at.zhihu.com/api/4/story/'+localStorage.getItem('currentId')+'/short-comments';
-      $.get("http://localhost/api?url="+url,(data,status)=>{
+      $.get(this.requestUrl+"?url="+url,(data,status)=>{
           try{
             data=JSON.parse(data);
             this.items=data['comments'];
