@@ -15,16 +15,6 @@ new Vue({
   components: { App },
   template: '<App/>',
   methods:{
-    hasNewVersion:function(){
-       $.get("http://m.stormpass.cn/zhihu/php/version?localversion="+this.zhiHuVersion,(data,status)=>{
-          try{
-            data=JSON.parse(data);
-            this.multiStoryDataList.push(data);
-            this.btnInfo="加载更多";
-          }catch(e){
-            this.btnInfo="加载失败";
-          }
-        });
-    }
+    
   }
 })
