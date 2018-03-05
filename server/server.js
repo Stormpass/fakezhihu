@@ -6,6 +6,7 @@ var url=require('url');
 function onRequest(request,response){
   var param=url.parse(request.url,true).query;
   var pathname = url.parse(request.url).pathname;
+  console.log(pathname);
   
   switch(pathname){
         //'首页'
@@ -13,11 +14,9 @@ function onRequest(request,response){
         case '/home':
             staticServer('/apitest.html',response);
             break;
-        //'about页'
         case '/api':
             zhiHuApiServer(param,response);  
             break;
-        //'404页'
         default:
             staticServer('./view/404.html',response);
             break;         
@@ -26,8 +25,6 @@ function onRequest(request,response){
 http.createServer(onRequest).listen(8888);
 
 function staticServer(pathname,response){
-   // 输出请求的文件名
-   console.log("Request for " + pathname + " received.");
    // 从文件系统中读取请求的文件内容
    fs.readFile(pathname.substr(1), function (err, data) {
       if (err) {
@@ -60,7 +57,7 @@ function zhiHuApiServer(param ,res){
     });
 
     response.on('end',function(){
-      console.log(body);
+      //console.log(body);
       res.setHeader("Access-Control-Allow-Origin","*");  
       res.writeHead(200,{'Content-Type':'text/plain'});
       res.write(''+body);

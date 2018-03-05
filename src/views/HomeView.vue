@@ -25,6 +25,7 @@
 	  		console.log(this.storyDataList);
 	  	},
       getListData:function(){
+        var url='https://news-at.zhihu.com/api/4/news/lastest';
       	$.get("http://localhost:8888/api?detail=latest",(data,status)=>{
 			    try{
             data=JSON.parse(data);

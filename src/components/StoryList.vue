@@ -1,6 +1,6 @@
 <template>
   <div>
-    <router-link  v-for="(item,index) in items" :to="{name:'StoryView',params:{id:item.id}}">
+    <router-link  v-for="(item,i) in items" :to="{name:'StoryView',params:{id:item.id}}" :key='i'>
       <div class="card">
         <div class="card-left">
           <img :src="item.images[0]">
