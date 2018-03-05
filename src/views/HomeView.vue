@@ -5,6 +5,11 @@
 			<story-list  :items="storyDataList.stories" ></story-list>
 		</div>
     <div @click='loadMore' class="load-btn" v-show="btnFlag">{{btnInfo}}</div>
+    <div class="new-version" v-show='showUpdate'>
+      <a id="newVersionUrl" href="">发现新版本点此下载</a>
+      <span style="color:black">您也可以点击右边☞</span>
+      <span @click="ignoreThisVersion">忽略此版本</span>
+    </div>
     <div class="white"></div>
 	</div>
 </template>
@@ -12,7 +17,6 @@
 <script type="text/javascript">
 	import HeaderBar from "@/components/HeaderBar";
   import StoryList from "@/components/StoryList";
-  //import {dataList} from "@/store/data.js";
 	export default{
 	  name:"home-view",
 	  components:{ HeaderBar ,StoryList},
@@ -20,12 +24,13 @@
 	    return {
         multiStoryDataList:[],
         btnInfo:'点击加载更多',
-        btnFlag:'false'
+        btnFlag:'false',
+        newVersion:'',
+        showUpdate:false
 	    }
 	  },
 	  methods:{
 	  	showdata(){
-	  		console.log(this.storyDataList);
 	  	},
       getListData:function(){
         var url='https://news-at.zhihu.com/api/4/news/latest';
@@ -78,11 +83,40 @@
           day='0'+day;
         }
         return ""+d.getFullYear()+month+day;
+      },
+      hasNewVersion:function(){
+      //$.get("http://m.stormpass.cn/zhihu/php/version?localversion="+this.zhiHuVersion,(data,status)=>{
+      $.get("http://localhost/version?localversion="+this.zhiHuVersion,(data,status)=>{
+          try{
+            data=JSON.parse(data);
+            if (data['code']=='yes') {
+              this.newVersion=data['newVersion'];
+              try{
+                var ignore=localStorage.getItem('ignoreversion');
+                if(ignore==data['newVersion']){
+                    return false;
+                } 
+              //向用户提示更新版本
+              document.getElementById("newVersionUrl").setAttribute('href',data['updateUrl']);
+              this.showUpdate=true;
+              }catch(e){
+                 console.log(e.mesaage);
+              }
+            }
+          }catch(e){
+            console.log(e.mesaage);
+          }
+        });
+      },
+      ignoreThisVersion:function(){
+        localStorage.setItem('ignoreversion',this.newVersion);
+        this.showUpdate=false;
       }
 	  },
 	  mounted(){
 	  	this.showdata();
 	  	this.getListData();
+      this.hasNewVersion();
 	  	var i = document.getElementsByTagName("meta");
       i[1]["content"] = "width=640,maximum-scale=1,user-scalable=no";
 	  },
@@ -122,5 +156,20 @@
     font-size: 30px;
     margin: 0px auto;
     box-sizing: border-box;
+  }
+  .new-version {
+    position:fixed;
+    bottom: 0px;
+    width: 100%;
+    font-size: 20px;
+    background: white;
+    height: 80px;
+    line-height: 80px;
+  }
+  .new-version a{
+    display: inline-block;
+    font-size: 25px;
+    line-height: 80px;
+    float: left;
   }
 </style>

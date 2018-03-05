@@ -63,7 +63,7 @@ export default{
             data=JSON.parse(data);
             this.items=data['comments'];
             this.commentsshow=true;
-            this.btnInfo='最近'+data['comments'].length+'讨论';
+            this.btnInfo='最近'+data['comments'].length+'条评论';
           }catch(e){
             console.log(e.message);
             this.btnInfo='抱歉,加载失败';
