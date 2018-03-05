@@ -85,8 +85,7 @@
         return ""+d.getFullYear()+month+day;
       },
       hasNewVersion:function(){
-      //$.get("http://m.stormpass.cn/zhihu/php/version?localversion="+this.zhiHuVersion,(data,status)=>{
-      $.get("http://localhost/version?localversion="+this.zhiHuVersion,(data,status)=>{
+      $.get("http://m.stormpass.cn/zhihu/php/version?localversion="+this.zhiHuVersion,(data,status)=>{
           try{
             data=JSON.parse(data);
             if (data['code']=='yes') {
