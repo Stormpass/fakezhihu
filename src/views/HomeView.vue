@@ -1,5 +1,5 @@
 <template>
-	<div class="home">
+	<div id="home" class="home">
 		<header-bar></header-bar>
 		<div class="list-container" v-for='storyDataList in multiStoryDataList'>
 			<story-list  :items="storyDataList.stories" ></story-list>
@@ -10,6 +10,7 @@
       <span style="color:black">您也可以点击右边☞</span>
       <span @click="ignoreThisVersion">忽略此版本</span>
     </div>
+    <div id="tap" class="tap" v-show='showTap' @click='scrollToTop'>Top</div>
     <div class="white"></div>
 	</div>
 </template>
@@ -26,7 +27,8 @@
         btnInfo:'点击加载更多',
         btnFlag:'false',
         newVersion:'',
-        showUpdate:false
+        showUpdate:false,
+        showTap:false
 	    }
 	  },
 	  methods:{
@@ -37,20 +39,29 @@
 			    try{
             data=JSON.parse(data);//把数据转成obj
             var cache=JSON.parse(localStorage.getItem('multiStoryDataList'));//取得本地存储中的数据
-            if (cache.length>2) {//拦截器
-              cache.pop();//如果数组长度超过了2,则把最后一个元素删除;
+
+            if (cache) {//当cache存在时才判断
+              
+              while(cache.length>10){
+                cache.pop();//如果数组长度超过了2,则把最后一个元素删除;
+              }
+              
+              if (data['date']==cache[0]['date']) {
+                cache[0]=data;//更新最新的数据
+                this.multiStoryDataList=cache;
+              }else {//用户可能是第二天打开软件,此时本地存储中第一个数组中的元素会是昨天或者前天的
+                cache=[];//清空数组中的元素
+                cache.unshift(data);
+              }
+            }else{//如果本地存储不存在,则初始化;
+              cache=[];//初始化cache
+              cache.unshift(data);
             }
 
-            if (data['date']==cache[0]['date']) {
-              cache[0]=data;//更新最新的数据
-              this.multiStoryDataList=cache;
-            }else {//用户可能是第二天打开软件,此时本地存储中第一个数组中的元素会是昨天或者前天的
-              cache=[];//清空数组中的元素
-              cache.unshift(data);//则往数组头部添加元素,
-            }
             this.multiStoryDataList=cache;//执行完上述逻辑后,cache已经是最新的数据了,且长度不会超过3
             this.btnFlag=true;
             localStorage.setItem('multiStoryDataList',JSON.stringify(cache));
+            
 			    }catch(e){
 			    	console.log(e.message);
 			    }
@@ -65,6 +76,7 @@
             data=JSON.parse(data);
             this.multiStoryDataList.push(data);
             this.btnInfo="加载更多";
+            localStorage.setItem('multiStoryDataList',JSON.stringify(this.multiStoryDataList));
           }catch(e){
             this.btnInfo="加载失败";
           }
@@ -97,7 +109,7 @@
         return ""+d.getFullYear()+month+day;
       },
       hasNewVersion:function(){
-      $.get("http://m.stormpass.cn/version.php?localversion="+this.zhiHuVersion,(data,status)=>{
+      $.get("http://m.stormpass.cn/php/version.php?localversion="+this.zhiHuVersion,(data,status)=>{
           try{
             data=JSON.parse(data);
             if (data['code']=='yes') {
@@ -122,6 +134,20 @@
       ignoreThisVersion:function(){
         localStorage.setItem('ignoreversion',this.newVersion);
         this.showUpdate=false;
+      },
+      homeOnScroll:function(){
+        var home=document.getElementById('home');
+        sessionStorage.setItem('homeScrollTop',home.scrollTop);
+        if (home.scrollTop>4000) {
+          this.showTap=true;
+        }
+        if (home.scrollTop<3000) {
+          this.showTap=false;
+        }
+      },
+      scrollToTop:function(){
+        document.getElementById('home').scrollTop=0;
+        this.showTap=false;
       }
 	  },
 	  mounted(){
@@ -141,6 +167,10 @@
         
       }
       this.hasNewVersion();
+      var home= document.getElementById('home');
+      home.addEventListener("scroll", this.homeOnScroll);
+
+      setTimeout('home.scrollTop=sessionStorage.getItem("homeScrollTop");',1);//必须设置时间才有效,不知为何
 	  	var i = document.getElementsByTagName("meta");
       i[1]["content"] = "width=640,maximum-scale=1,user-scalable=no";
 	  },
@@ -195,5 +225,16 @@
     font-size: 25px;
     line-height: 80px;
     float: left;
+  }
+  .tap{
+    position: fixed;
+    right:20px;
+    bottom: 20px;
+    width: 70px;
+    height: 70px;
+    background: orange;
+    border-radius: 70px;
+    line-height: 70px;
+    font-size: 30px;
   }
 </style>
