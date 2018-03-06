@@ -23,7 +23,7 @@
 	.header{
 		width: 600px;
 		height: 65px;
-		margin: 0px auto 30px;
+		margin: 30px auto 30px;
 		position: relative;
 	}
 	.header::before{

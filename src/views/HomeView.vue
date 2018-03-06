@@ -31,13 +31,26 @@
 	  },
 	  methods:{
       getListData:function(){
+        console.log(new Date().getTime());
         var url='https://news-at.zhihu.com/api/4/news/latest';
       	$.get(this.requestUrl+"?url="+url,(data,status)=>{
 			    try{
-            data=JSON.parse(data);
-            this.multiStoryDataList.push(data);
+            data=JSON.parse(data);//把数据转成obj
+            var cache=JSON.parse(localStorage.getItem('multiStoryDataList'));//取得本地存储中的数据
+            if (cache.length>2) {//拦截器
+              cache.pop();//如果数组长度超过了2,则把最后一个元素删除;
+            }
+
+            if (data['date']==cache[0]['date']) {
+              cache[0]=data;//更新最新的数据
+              this.multiStoryDataList=cache;
+            }else {//用户可能是第二天打开软件,此时本地存储中第一个数组中的元素会是昨天或者前天的
+              cache=[];//清空数组中的元素
+              cache.unshift(data);//则往数组头部添加元素,
+            }
+            this.multiStoryDataList=cache;//执行完上述逻辑后,cache已经是最新的数据了,且长度不会超过3
             this.btnFlag=true;
-            localStorage.setItem('multiStoryDataList',JSON.stringify(this.multiStoryDataList));
+            localStorage.setItem('multiStoryDataList',JSON.stringify(cache));
 			    }catch(e){
 			    	console.log(e.message);
 			    }
@@ -84,7 +97,7 @@
         return ""+d.getFullYear()+month+day;
       },
       hasNewVersion:function(){
-      $.get("http://m.stormpass.cn/zhihu/php/version?localversion="+this.zhiHuVersion,(data,status)=>{
+      $.get("http://m.stormpass.cn/version.php?localversion="+this.zhiHuVersion,(data,status)=>{
           try{
             data=JSON.parse(data);
             if (data['code']=='yes') {
@@ -125,9 +138,8 @@
           this.getListData();
         }
       }catch(e){
-        this.getListData();
+        
       }
-      
       this.hasNewVersion();
 	  	var i = document.getElementsByTagName("meta");
       i[1]["content"] = "width=640,maximum-scale=1,user-scalable=no";
