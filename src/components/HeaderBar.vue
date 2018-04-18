@@ -3,7 +3,7 @@
 		<h1 class="m-logo">
 			<img src="../assets/zhihu_logo.png">		
 		</h1>
-		<span class="title">感受知识的乐趣</span>
+		<span class="title">知乎故事会</span>
 	</div>
 </template>
 

@@ -5,7 +5,7 @@ import App from './App'
 import router from './router'
 
 Vue.config.productionTip = false;
-Vue.prototype.zhiHuVersion = "0.1";
+Vue.prototype.zhiHuVersion = "0.2";
 //Vue.prototype.requestUrl = "http://localhost/api";
 Vue.prototype.requestUrl = "http://m.stormpass.cn/php/api.php";
 /* eslint-disable no-new */

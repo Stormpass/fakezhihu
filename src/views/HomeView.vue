@@ -69,7 +69,7 @@
       },
       loadMore: function(){
         this.btnInfo="加载中...";
-        var day=this.getPreDay(this.multiStoryDataList[this.multiStoryDataList.length-1]['date']);
+        var day=this.multiStoryDataList[this.multiStoryDataList.length-1]['date'];
         var url='https://news-at.zhihu.com/api/4/news/before/'+day;
         $.get(this.requestUrl+"?url="+url,(data,status)=>{
           try{
