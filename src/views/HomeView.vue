@@ -1,8 +1,8 @@
 <template>
 	<div id="home" class="home">
 		<header-bar></header-bar>
-		<div class="list-container" v-for='storyDataList in multiStoryDataList'>
-			<story-list  :items="storyDataList.stories" ></story-list>
+		<div class="list-container" v-for='storyDataList in multiStoryDataList' :key="storyDataList.NONE">
+			<story-list :items="storyDataList.stories"></story-list>
 		</div>
     <div @click='loadMore' class="load-btn" v-show="btnFlag">{{btnInfo}}</div>
     <div class="new-version" v-show='showUpdate'>
@@ -224,7 +224,6 @@
     display: inline-block;
     font-size: 25px;
     line-height: 80px;
-    float: left;
   }
   .tap{
     position: fixed;

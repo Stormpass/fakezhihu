@@ -13,7 +13,7 @@
       <span>{{btnInfo}}</span>
     </div>
     <div class="comments-container" v-show='commentsshow' > 
-      <comments-item v-for="item in items" :item='item'></comments-item>
+      <comments-item v-for="item in items" :item='item' :key="item.NONE"></comments-item>
     </div>
     <div class="white"></div>
   </div>
@@ -52,9 +52,6 @@ export default{
           }
       });
     },
-    handledata:function(){
-
-    },
     showComments:function(){
       this.btnInfo='加载中......';
       var url='https://news-at.zhihu.com/api/4/story/'+localStorage.getItem('currentId')+'/short-comments';
@@ -83,7 +80,6 @@ export default{
      //处理页面显示问题
     var i = document.getElementsByTagName("meta");
     i[1]["content"] = "user-scalable=no, width=device-width";  //历史遗留问题
-    
   },
 }
 </script>
